@@ -1,21 +1,22 @@
 {
-  "timeZone": "Australia/Sydney",
+  "timeZone": "America/New_York",
   "dependencies": {
-    "libraries": [
-      {
-        "userSymbol": "ED4eFunctions",
-        "version": "0",
-        "libraryId": "1BENn-LNZO45PKxz-4nXrPLzJx95uCZy0KcP98Ru9o40wWi6xZylzBHjR",
-        "developmentMode": true
-      }
-    ],
-    "enabledAdvancedServices": [
-      {
-        "userSymbol": "Sheets",
-        "version": "v4",
-        "serviceId": "sheets"
-      }
-    ]
+    "enabledAdvancedServices": [{
+      "userSymbol": "Sheets",
+      "serviceId": "sheets",
+      "version": "v4"
+    }],
+    "libraries": [{
+      "userSymbol": "ED4eActions",
+      "libraryId": "1Rnt_E9O3lRwh66CkhDTQYf_ZdBpvhV0QNGh7qnqTABLgB-M1EArN5vuV",
+      "version": "0",
+      "developmentMode": true
+    }, {
+      "userSymbol": "ED4eFunctions",
+      "libraryId": "1BENn-LNZO45PKxz-4nXrPLzJx95uCZy0KcP98Ru9o40wWi6xZylzBHjR",
+      "version": "0",
+      "developmentMode": true
+    }]
   },
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8"
