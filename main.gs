@@ -50,14 +50,25 @@ function onOpen() {
 
 function simpleAction(action,target,characteristic) {
   action.target = target;
+  action.debug = true;
   action.characteristic = characteristic;
   ED4eActions.simpleAction(action);
   action.commit();
 }
 
+function newDay() {
+  var action = ED4eActions.EDAction(CharacterSheetLocations);
+  simpleAction(action,"Environment","New Day");
+}
+
+function healWound() {
+  var action = ED4eActions.EDAction(CharacterSheetLocations);
+  simpleAction(action,"Health","Wounds");
+}
+
 function decreaseDamage() {
   var action = ED4eActions.EDAction(CharacterSheetLocations);
-  simpleAction(action,"Health","Damage");
+  simpleAction(action,"Health","Heal");
 }
 
 function increaseDamage() {
