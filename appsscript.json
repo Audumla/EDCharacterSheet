@@ -1,0 +1,22 @@
+{
+  "timeZone": "Australia/Sydney",
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "ED4eFunctions",
+        "version": "0",
+        "libraryId": "1BENn-LNZO45PKxz-4nXrPLzJx95uCZy0KcP98Ru9o40wWi6xZylzBHjR",
+        "developmentMode": true
+      }
+    ],
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Sheets",
+        "version": "v4",
+        "serviceId": "sheets"
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8"
+}

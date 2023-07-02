@@ -42,7 +42,7 @@ function rollDice(action, step, modifier = 0, karmaStep = 0) {
 
   // roll karma if its supplied
   if (karmaStep != 0) {
-    var karmaDie = getStepDice(karmsaStep);
+    var karmaDie = getStepDice(karmaStep);
     var karmaAllResult = roleOnedie(karmaDie);
     totalResult += Number(karmaAllResult[0])
     action.setProperty("Character","Karma","Result",karmaAllResult[0]);
