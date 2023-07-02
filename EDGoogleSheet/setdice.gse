@@ -1,0 +1,20 @@
+=
+{properties;
+        lambda(steps,karmaDice,
+                lambda(counter,
+                        reduce({"","","",""},counter,
+                                lambda(dice, counter, 
+                                        lambda(step,
+                                                {dice;
+                                                index(step,0,1),
+                                                index(step,0,2),
+                                                "Dice",
+                                                vlookup(index(step,1,4),'Character Properties'!$Q$2:$R$50,2)&
+                                                if(ifna(filter(index(properties,0,4),index(properties,0,1)="Condition",index(properties,0,2)=index(step,1,2)&" Karma",index(properties,0,3)="Enabled",index(properties,0,4)),0)>0,"+"&karmaDice,"")&
+                                                ifna(text(filter(index(properties,0,4),index(properties,0,1)=index(step,1,1),index(properties,0,2)=index(step,1,2),index(properties,0,3)="Modifier",index(properties,0,4)<>0)," (+0); (-0);0 )"),"")
+                                                
+                                        })(index(steps,counter,0))
+                                )
+                        )
+                )(MAKEARRAY(rows(steps), 1, lambda(r, c, r)))
+        )(filter(properties, index(properties,0,3)= "Step"),vlookup(filter(index(properties,0,4),index(properties,0,1)="Karma",index(properties,0,2)="Karma",index(properties,0,3)="Step"),'Character Properties'!$Q$2:$R$50,2))}

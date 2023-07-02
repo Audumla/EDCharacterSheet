@@ -1,0 +1,19 @@
+={
+lambda(types,
+iferror(ArrayFormula(
+        Split(
+                Query(
+                        Flatten(
+                                IF(
+                                        filter("Type:"&index(properties,0,4),index(properties,0,3)="type")=Transpose(filter(index(properties,0,1),types)),
+                                        filter(index(properties,0,1),index(properties,0,3)="type")&"!"&Transpose(filter(index(properties,0,2),types))&"!"&Transpose(filter(index(properties,0,3),types))&"!"&Transpose(FILTER(index(properties,0,4),types))
+                                        ,"!"
+                                )
+                                
+                        ),
+                "Where Col1!='' and not Col1 matches '[!]{1,3}'"),
+        "!")
+),{"","","",""})
+)(arrayformula(countif(unique(filter("Type:"&index(properties,0,4),index(properties,0,3)="type")),index(properties,0,1))));
+if(copy,properties,{"","","",""})
+}

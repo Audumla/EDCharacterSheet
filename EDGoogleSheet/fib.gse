@@ -1,0 +1,1 @@
+=if(count>0,if(n>0,round(POW((1+sqrt(5))/2,n+1)/sqrt(5))+if(count>1,FIB(n+1,count-1),0),0),0)

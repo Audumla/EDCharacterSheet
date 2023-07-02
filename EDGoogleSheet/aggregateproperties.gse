@@ -1,0 +1,4 @@
+={
+	iferror(query({filter(range,index(range,0,4)<>0,isnumber(index(range,0,4)))},"select Col1,Col2,Col3,sum(Col4) where Col4 is not null group by Col1,Col2,Col3 order by Col1,Col3,Col2 label sum(Col4) ''",0),{"","","",""});
+	iferror((filter(range,not(isnumber(index(range,0,4))),index(range,0,4)<>"")),{"","","",""})
+}

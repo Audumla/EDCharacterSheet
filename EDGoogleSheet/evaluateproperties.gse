@@ -1,0 +1,9 @@
+=AGGREGATEPROPERTIES(
+	{
+		{index(range,0,1),index(range,0,2),index(range,0,3),
+			MAKEARRAY(rows(range),1,
+				lambda(r,c,EVALUATEVALUE(index(range,r,4),index(range,r,0),range,blank))
+			)
+		}
+	}
+)

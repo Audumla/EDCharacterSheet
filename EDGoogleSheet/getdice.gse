@@ -1,0 +1,12 @@
+=lambda(step,modifier,karma,
+		if(isblank(step),,
+		"(Step "&step&") "&
+		xlookup(step,'Character Properties'!$Q$2:$Q$75,'Character Properties'!$R$2:$R$75,)&
+		if(karma," ("&if(karma<=1,,karma)&xlookup(xlookup("CharacterKarmaStep",index(CharProps,0,1),index(CharProps,0,5)),'Character Properties'!$Q$2:$Q$75,'Character Properties'!$R$2:$R$75)&")",)&
+		if(modifier<>0,text(modifier," (+0); (-0);0 "),))
+)
+(
+	xlookup(target&characteristic&"Step",index(CharProps,0,1),index(CharProps,0,5),,2),
+	xlookup(target&characteristic&"Modifier",index(CharProps,0,1),index(CharProps,0,5),0),
+	xlookup(target&characteristic&"UseKarma",index(CharProps,0,1),index(CharProps,0,5),false)
+)

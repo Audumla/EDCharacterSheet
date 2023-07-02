@@ -1,0 +1,3 @@
+=iferror(sort(unique(
+        filter(Action!$K$2:$K,REGEXMATCH(Action!$I$2:$I,"^"&categories&"$"))
+    ),1,true),"None")

@@ -1,0 +1,41 @@
+=iferror(iferror(VALUE(propertyValue),
+	if(regexmatch(propertyValue,"ACTION:"),propertyValue,
+		lambda(params,
+			lambda(eval,op,param1,param2,param3,
+				lambda(replace,
+					lambda(evalReplaced, iferror(VALUE(evalReplaced),evalReplaced))
+					(if(replace=propertyValue,propertyValue,REGEXREPLACE(substitute(propertyValue,eval,replace),"\[|\]","")))
+				)(
+					SWITCH(op,
+						"REF", 	iferror(lambda(found, 
+										if(rows(found)=1,EVALUATEVALUE(index(found,1,4),row,range,blank),
+											lambda(defaultsFound,
+												if(rows(defaultsFound)=1,EVALUATEVALUE(index(defaultsFound,1,4),row,range,blank),
+													if(blank,"ERROR:Multiple REF:"&join(",",flatten(found)),propertyValue)
+												)
+											)
+											(filter(found, if(ISNONTEXT(index(found,0,4)),true, not(regexmatch(index(found,0,4),"DEFAULT")))))
+										)
+									)(lambda(criteria,
+										filter(range,countifs(index(criteria,1,1),if(index(criteria,1,1)="*",index(criteria,1,1),index(range,0,1)),index(criteria,1,2),if(index(criteria,1,2)="*",index(criteria,1,2),index(range,0,2)),index(criteria,1,3),if(index(criteria,1,3)="*",index(criteria,1,3),index(range,0,3))))
+									)(SPLIT(param3,"|"))),if(blank,,propertyValue)),
+						"ADD",ADD(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
+						"MINUS",MINUS(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
+						"DIVIDE",rounddown(DIVIDE(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),0),
+						"MULTIPLY",MULTIPLY(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
+						"FIB",FIB(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
+						"MAX",MAX(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
+						"MIN",MIN(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
+						"DEFAULT", 	iferror(
+										lambda(found, 
+											if(rows(found)=1,EVALUATEVALUE(index(found,0,4),row,range,blank),"Default Not Found")
+										)(filter(range,countif(index(row,1,1),index(range,0,1)),countif(index(row,1,2),index(range,0,2)),countif(index(row,1,3),index(range,0,3)),not(regexmatch(index(found,0,4),"DEFAULT")))),
+										if(blank,EVALUATEVALUE(param3,row,range,blank),propertyValue)
+									),
+						"Unknown Operation ["&op&"]"
+					)
+				)
+			)(index(params,0,1),INDEX(params,0,2),index(params,0,3),INDEX(params,0,4),INDEX(params,0,5))
+		)(REGEXEXTRACT(propertyValue,"(("&'Character Properties'!$AE$2&")[\(|:](?:(?:(.*),(.*)[\)])|([^]]*)))"))
+	)
+),propertyValue)
