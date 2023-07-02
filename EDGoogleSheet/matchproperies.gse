@@ -1,0 +1,57 @@
+{
+    if(copy,properties,{"","","",""});
+	lambda(valuerules,
+		(lambda(source,
+				{
+				lambda(a,b,c,d,e,f,g,h,i,j,w,x,y,z,
+					lambda(evaluatedProps,
+						{index(evaluatedProps,0,1),index(evaluatedProps,0,2),index(evaluatedProps,0,3),MAKEARRAY(rows(evaluatedProps),1,lambda(r,c,EVALUATEVALUE(index(evaluatedProps,r,4),index(evaluatedProps,r,0),properties,blank)))}
+					)
+					({
+						(iferror(
+							filter({g,h,i,
+								lambda(valueProperty,valueProperty)
+								(FINDREPLACEPROPERTY(j,b,c,d,"REF:"&b&"|"&c&"|"&"|"&d))
+							},COUNTIFS(w,b,x,c,y,d,z,VLOOKUP(e,Operations,2,false)&f),b<>"*",c<>"*",d<>"*",f<>"*",g<>"*",h<>"*",i<>"*",j<>"*"),
+						{"","","",""}));
+						iferror(query(filter({g,h,i,FINDREPLACEPROPERTY(j,b,c,d,"REF:"&b&"|"&c&"|"&"|"&d)},COUNTIFS(w,b,x,c,y,d,z,">="&f),e="Max"),"Select Col1,Col2,Col3,max(Col4) Group By Col1,Col2,Col3 label max(Col4) ''",0),{"","","",""})
+						
+					})
+				)(index(source,0,1),index(source,0,2),index(source,0,3),index(source,0,4),index(source,0,5),index(source,0,6),index(source,0,7),index(source,0,8),index(source,0,9),index(source,0,10),index(properties,0,1),index(properties,0,2),index(properties,0,3),index(properties,0,4));
+				(LAMBDA(wcSource,
+					lambda(range,
+						lambda(sourceCounter,
+							lambda(evaluatedProps,
+								{index(evaluatedProps,0,1),index(evaluatedProps,0,2),index(evaluatedProps,0,3),MAKEARRAY(rows(evaluatedProps),1,lambda(r,c,EVALUATEVALUE(index(evaluatedProps,r,4),index(evaluatedProps,r,0),properties,blank)))}
+							)
+							(reduce( {"","","",""}, sourceCounter,
+								lambda(matched,counter,
+									{matched;
+										lambda(criteria,
+											iferror(filter(
+												{
+													if(isblank(index(range,0,1)),,if(index(criteria,1,7)="*",index(range,0,1),FINDREPLACEPROPERTY(index(criteria,1,7),index(range,0,1),INDEX(range,0,2),index(range,0,3),index(range,0,4)))),
+													if(isblank(index(range,0,2)),,if(index(criteria,1,8)="*",index(range,0,2),FINDREPLACEPROPERTY(index(criteria,1,8),index(range,0,1),INDEX(range,0,2),index(range,0,3),index(range,0,4)))),
+													if(isblank(index(range,0,3)),,if(index(criteria,1,9)="*",index(range,0,3),FINDREPLACEPROPERTY(index(criteria,1,9),index(range,0,1),INDEX(range,0,2),index(range,0,3),index(range,0,4)))),
+													if(isblank(index(range,0,4)),,if(index(criteria,1,10)="*",index(range,0,4),FINDREPLACEPROPERTY(index(criteria,1,10),index(range,0,1),INDEX(range,0,2),index(range,0,3),index(range,0,4))))
+												},
+												index(range,0,1)=if(index(criteria,1,2)="*",index(range,0,1),index(criteria,1,2)),
+												index(range,0,2)=if(index(criteria,1,3)="*",index(range,0,2),index(criteria,1,3)),
+												index(range,0,3)=if(index(criteria,1,4)="*",index(range,0,3),index(criteria,1,4)),
+												if(isblank(index(range,0,4)),,if(index(criteria,1,6)="*",true,if(isnumber(index(range,0,4)),
+													countif(VALUE(EVALUATEVALUE(index(criteria,1,6),{},properties,false)),VLOOKUP(index(criteria,1,5),Operations,3,false)&index(range,0,4)),
+													countif(EVALUATEVALUE(index(criteria,1,6),{},properties,false),index(range,0,4))
+												)))
+											),{"","","",""})
+										)(index(wcSource,counter,0))
+									}
+								)
+							))
+						)(MAKEARRAY(rows(wcSource),1,lambda(r,c,r)))
+					)(properties)
+				)(filter(source,(index(source,0,2)="*")+(index(source,0,3)="*")+(index(source,0,4)="*")+(index(source,0,6)="*")+(iferror(find("REF",index(source,0,6))>=0,0)))))
+				}
+		)(filter(rules,(index(rules,0,1)=order)+countif(valuerules,(index(rules,0,1))))))
+	)
+	(unique(filter(order&"|"&index(properties,0,2),index(properties,0,1)="Condition",index(properties,0,3)="Enabled",index(properties,0,4))))
+}
