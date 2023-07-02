@@ -54,6 +54,16 @@ function simpleAction(action,target,characteristic) {
   action.commit();
 }
 
+function decreaseDamage() {
+  var action = ED4eActions.EDAction(CharacterSheetLocations);
+  simpleAction(action,"Health","Damage");
+}
+
+function increaseDamage() {
+  var action = ED4eActions.EDAction(CharacterSheetLocations);
+  simpleAction(action,"Health","Damage");
+}
+
 function karmaRitual() {
   var action = ED4eActions.EDAction(CharacterSheetLocations);
   simpleAction(action,"Talent","Karma Ritual");
