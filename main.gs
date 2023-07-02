@@ -15,6 +15,7 @@ var CharacterSheetLocations = {
   TargetLocation : "ActionTargetNumber",
   // where to write log messages
   ActionLog : "ActionLog"
+  
 }
 
 function onOpen() {
