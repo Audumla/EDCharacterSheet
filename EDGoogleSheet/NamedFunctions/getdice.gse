@@ -1,8 +1,8 @@
 =lambda(step,modifier,karma,
 		if(isblank(step),,
 		"(Step "&step&") "&
-		xlookup(step,'Character Properties'!$Q$2:$Q$75,'Character Properties'!$R$2:$R$75,)&
-		if(karma," ("&if(karma<=1,,karma)&xlookup(xlookup("CharacterKarmaStep",index(CharProps,0,1),index(CharProps,0,5)),'Character Properties'!$Q$2:$Q$75,'Character Properties'!$R$2:$R$75)&")",)&
+		xlookup(step,index(StepDice,0,1),index(StepDice,0,2),)&
+		if(karma," ("&if(karma<=1,,karma)&xlookup(xlookup("CharacterKarmaStep",index(CharProps,0,1),index(CharProps,0,5)),index(StepDice,0,1),index(StepDice,0,2))&")",)&
 		if(modifier<>0,text(modifier," (+0); (-0);0 "),))
 )
 (
