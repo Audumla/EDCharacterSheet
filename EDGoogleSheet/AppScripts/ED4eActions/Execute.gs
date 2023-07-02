@@ -1,6 +1,4 @@
-const DISABLETRIGGER = "DISABLE";
-const ACTIONOPERATION = "ACTION"
-const ACTIONLOG = "ACTION";
+
 
 function disableTrigger(action,operation) {
   if (isNaN(operation)) {
@@ -65,20 +63,22 @@ function evaluateValue(action,operation) {
 }
 
 function applyTriggers(action) {
-
+    // if a result location is set then check to see if a preset result has been added.
+    var resultNumber = action.locations.ResultLocation != null ? action.value(action.locations.ResultLocation) : null;
+    // if the result is null either because the the location was not set or there was no value in the location then lookup a property result value  
+    resultNumber == null ? action.property(action.target,action.characteristic,"Result") : null;
     // get the 'trigger' properties for this action and add these to the associated property for processing on the commit
     var triggers = action.properties(action.target,action.characteristic,action.actionType);
     //action.alert(action.target+" "+action.characteristic);
     for (var i = 0;i<triggers.length;++i) {
-      //action.alert(triggers[i][0]+" "+triggers[i][1]+" "+triggers[i][2]+" "+triggers[i][3]);
+      action.alert(triggers[i][0]+" "+triggers[i][1]+" "+triggers[i][2]+" "+triggers[i][3]);
       // replace any RESULT strings with the rolled result number
-      var result = action.property(action.target,action.characteristic,"Result");
       
-      var operation = result == null ? triggers[i][3] : triggers[i][3].replace("RESULT",result);
+      var operation = resultNumber == null ? triggers[i][3] : triggers[i][3].replace("RESULT",resultNumber);
       var disable = disableTrigger(action,operation);
       if (disable != null) {
         // if any of the triggers are disable then halt the action processing 
-        action.error(DISABLETRIGGER,disable);
+        action.log(DISABLETRIGGER,disable);
         action.success = false;
       }
       else {
@@ -102,14 +102,10 @@ function diceAction(action){
     var useKarma = action.property(action.target,action.characteristic,"UseKarma"); 
     var rollModifier = action.property(action.target,action.characteristic,"Modifier");
     var karmaStep = action.property("Character","Karma","Step");
-    var strain = action.property(action.target,action.characteristic,"Strain");
-    var recoveries = action.property(action.target,action.characteristic,"Recoveries");
 
     // check validity of required properties
     if (rollModifier==null) rollModifier = 0;
     if (useKarma==null) useKarma = 0;
-    if (strain==null) strain = 0;
-    if (recoveries==null) recoveries = 0;
 
     // if a result number has not be preset then roll dice
     if ((resultNumber==null) || (resultNumber == 0)) {
