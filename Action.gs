@@ -4,18 +4,12 @@ const ACTIONLOG = "ACTION";
 const DEUBGLOG = "DEBUG";
 const ERRORLOG = "ERROR";
 
-
-
-function EDAction(sheetLocations) {
+function EDAction(sheetLocations = ActionProperties) {
   return {
     ss : SpreadsheetApp.getActiveSpreadsheet(),
     ui : SpreadsheetApp.getUi(),
-    locations : sheetLocations,
     actionProperties : ActionProperties,
-    characterProperties : SpreadsheetApp.getActiveSpreadsheet().getRange(sheetLocations.SeedProperties),
-    characterPropertiesIndex : sheetLocations.SeedPropertiesIndex == null ? null : SpreadsheetApp.getActiveSpreadsheet().getRange(sheetLocations.SeedPropertiesIndex).getValues().map(x => x[0]),
-    propertyResults : SpreadsheetApp.getActiveSpreadsheet().getRange(sheetLocations.ActionPropertyResults),
-    actionLog : SpreadsheetApp.getActiveSpreadsheet().getRange(sheetLocations.ActionLog),
+    characterPropertiesIndex : null,
     updatedProperties : [],
     operations : [],
     updateData : [],
@@ -61,11 +55,13 @@ function EDAction(sheetLocations) {
       var valueindex = 0;
       for (const [key, value] of entries) {
         if (value != null) {
-          this.log(DEUBGLOG,"LOADED ["+key+":"+retrievedData.valueRanges[valueindex].range+"]");
+//          this.log(DEUBGLOG,"LOADED ["+key+":"+retrievedData.valueRanges[valueindex].range+"]");
           this.actionProperties.actionValues[key] = retrievedData.valueRanges[valueindex].values == undefined ? null : retrievedData.valueRanges[valueindex].values;
+          this.actionProperties.actionLocations[key] = retrievedData.valueRanges[valueindex].range;
           valueindex++;
         }
       }
+      this.debug = this.actionProperties.actionValues.actionDebug=="TRUE";
     },
 
     commit : function() {
@@ -119,7 +115,11 @@ function EDAction(sheetLocations) {
 
     getCharacterPropertiesIndex : function() {
         if (this.characterPropertiesIndex == null) {
-          this.characterPropertiesIndex = this.characterProperties.getValues().map(x => x[0]+x[1]+x[2])
+          this.characterPropertiesIndex = [];
+          for (const x of this.actionProperties.actionValues.properties) {
+            //this.log(DEUBGLOG,"INDEX:"+x[0]+x[1]+x[2]+ "  VALUE:"+x[3]);
+            this.characterPropertiesIndex.push(x[0]+x[1]+x[2]);
+          }
         }
         return this.characterPropertiesIndex;
     },
@@ -127,7 +127,7 @@ function EDAction(sheetLocations) {
     property : function(target,characteristic,property) {
         var updatedProperty = this.findUpdatedProperty(target,characteristic,property);
         if (updatedProperty == null) {
-          var vals = this.characterProperties.getValues();
+          var vals = this.actionProperties.actionValues.properties;
           var index = this.getCharacterPropertiesIndex().indexOf(target+characteristic+property);
           if (index >= 0) {
             updatedProperty= vals[index][3];
@@ -144,11 +144,12 @@ function EDAction(sheetLocations) {
         else {
           updatedProperty = updatedProperty[3];
         }
+        this.log(DEUBGLOG,"LOOKUP PROPERTY["+target+","+characteristic+","+property+"]["+updatedProperty+"]");
         return updatedProperty;
     },
 
     properties : function(target,characteristic,property) {
-        var vals = this.characterProperties.getValues();
+        var vals = this.actionProperties.actionValues.properties;
         var found = [];
         var key = target+characteristic+property;
         var map = this.getCharacterPropertiesIndex();
@@ -183,34 +184,42 @@ function EDAction(sheetLocations) {
       this.operations.push(operation);
     },
 
-
     setProperty : function(target,characteristic,property,value) {
-      var v = this.propertyResults.getValues();
-      var count = 0;
-      var index = -1;
-      while (count < v.length) {
-        if (v[count] && v[count][0].toString().length > 0) {
-          if (v[count][0]==target && v[count][1]==characteristic && v[count][2]==property) {
-            index = count;
-            break;
-          }
-          else {
-            ++count;
-          }
-        } else {
-          if ((index < 0 ) && (this.updatedRows.indexOf(count)<0)) {
-            index = count;
-          }
-          else {
-            ++count;
+      var propertyKey = target+characteristic+property;
+//      this.log(DEUBGLOG,"PROPERTY KEY["+propertyKey+ "]["+this.actionProperties.propertyLocations[propertyKey]+"]");
+      if (this.actionProperties.propertyLocations[propertyKey] != undefined) {
+        this.log(DEUBGLOG,"UPDATED PROPERTY["+propertyKey+":"+this.actionProperties.propertyLocations[propertyKey]+"]["+value+"]");
+        var updateRange = this.actionProperties.propertyLocations[propertyKey];
+        this.updateRange(updateRange,value == null ? [[0]] : [[value]]);
+      }
+      else {
+        var results = this.actionProperties.actionValues.propertyResults;
+        var count = 0;
+        var index = -1;
+        while (count < results.length) {
+          if (results[count] && results[count][0].toString().length > 0) {
+            if (results[count][0]==target && results[count][1]==characteristic && results[count][2]==property) {
+              index = count;
+              break;
+            }
+            else {
+              ++count;
+            }
+          } else {
+            if ((index < 0 ) && (this.updatedRows.indexOf(count)<0)) {
+              index = count;
+            }
+            else {
+              ++count;
+            }
           }
         }
+        this.updatedRows.push(index);
+        var regionMatch = this.actionProperties.actionLocations.propertyResults.match("(.*)!([A-Z]*)([0-9]*):([A-Z]*)([0-9]*)");
+        var updateRange = regionMatch[1]+"!"+regionMatch[2]+(Number(regionMatch[3])+index)+":"+regionMatch[4]+(Number(regionMatch[3])+index);
+        this.log(DEUBGLOG,"UPDATED PROPERTY["+updateRange+"]["+target+":"+characteristic+":"+property+":"+value+"]");
+        this.updateRange(updateRange,value == null ? [[null,null,null,""]] : [[target,characteristic,property,""+value]]);
       }
-      this.updatedRows.push(index);
-      ++index;
-      var range = this.propertyResults.getSheet().getName()+"!"+this.propertyResults.getCell(index,1).getA1Notation()+":"+this.propertyResults.getCell(index,4).getA1Notation();
-//      this.alert(target+characteristic+property+value+" : "+this.propertyResults.getSheet().getName()+"!"+this.propertyResults.getCell(index,1).getA1Notation()+":"+this.propertyResults.getCell(index,4).getA1Notation());
-      this.updateRange(range,value == null ? [[null,null,null,0]] : [[target,characteristic,property,value]]);
     }
   }
 }

@@ -14,12 +14,14 @@ var ActionProperties = {
 
   // location names for data required for executing actions
   actionLocations : {
-    seedProperties : "ActionScriptProperties",
+    properties : "ActionScriptProperties",
     //seedPropertiesIndex : null, // lookup index can be built using the seed properties if null
-    actionPropertyResults : "ActionPropertyResults",
+    propertyResults : "ActionPropertyResults",
     actionLog : "ActionLog",
     actionResult : "ActionResultNumber",
     actionTarget : "ActionTargetNumber",
+    stepDice : "StepDice",
+    actionDebug : "Stats!M22",
     ItemQuantity : "Items!B3:B70"
   },
 

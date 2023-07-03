@@ -1,26 +1,20 @@
 var stepDice = null;
 var stepIndex = null;
 
-function getStepDice(step=0) {
-   if (stepDice == null) {
-      stepDice = SpreadsheetApp.getActiveSpreadsheet().getRange("StepDice").getValues();
-      stepIndex = stepDice.map(x => x[0]);
+function getStepDice(action, step=0) {
+  var steps = action.actionProperties.actionValues.stepDice;
+  for(var i = 0; i < steps.length; ++i) {
+    if (steps[i][0] == step) {
+      return steps[i][1];
+    }
   }
-    
-  var index = stepIndex.indexOf(step);
-  if (index == -1) {
-    return null;
-  } else {
-    var foundValue = stepDice[index][1];
-    return foundValue; 
-  } 
 }
 
 
 function rollDice(action, step, modifier = 0, karmaStep = 0) {
 
   var allResults = new Array(0,1,2,3,4);
-  var die=getStepDice(step);
+  var die=getStepDice(action,step);
   //first work out if there is one die or more
   var totalNumOfDice = 0;  
   var totalResult = 0;
@@ -42,7 +36,7 @@ function rollDice(action, step, modifier = 0, karmaStep = 0) {
 
   // roll karma if its supplied
   if (karmaStep != 0) {
-    var karmaDie = getStepDice(karmaStep);
+    var karmaDie = getStepDice(action,karmaStep);
     var karmaAllResult = roleOnedie(karmaDie);
     totalResult += Number(karmaAllResult[0])
     action.setProperty("Character","Karma","Result",karmaAllResult[0]);

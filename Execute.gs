@@ -71,15 +71,11 @@ function evaluateValue(action,operation) {
 
 function applyTriggers(action) {
     // if a result location is set then check to see if a preset result has been added.
-    var resultNumber = action.locations.ResultLocation != null ? action.value(action.locations.ResultLocation) : 0;
-    if (resultNumber == 0) {
+    var resultNumber = action.actionProperties.actionValues.actionResult;
+    if (resultNumber == null) {
       // if there is no preset result value then look for a result property attached to the target
       var resultProperty = action.property(action.target,action.characteristic,"Result");
       resultNumber = resultProperty == null ? 0 : resultProperty;
-    }
-    else {
-      // if the result came from the preset result location then blank it out after this action/
-      action.update(action.locations.ResultLocation,"");
     }
     // get the 'trigger' properties for this action and add these to the associated property for processing on the commit
     var triggers = action.properties(action.target,action.characteristic,action.actionType);
@@ -109,8 +105,8 @@ function simpleAction(action) {
 
 function diceAction(action){
     // initialize required properties
-    var resultNumber = action.locations.ResultLocation != null ? action.value(action.locations.ResultLocation) : null;
-    var targetNumber = action.locations.TargetLocation != null ? action.value(action.locations.TargetLocation) : null;
+    var resultNumber = action.actionProperties.actionValues.actionResult;
+    var targetNumber = action.actionProperties.actionValues.actionTarget
     var stepNumber = action.property(action.target,action.characteristic,"Step");
     var useKarma = action.property(action.target,action.characteristic,"UseKarma"); 
     var rollModifier = action.property(action.target,action.characteristic,"Modifier");
@@ -133,8 +129,8 @@ function diceAction(action){
         targetNumber = action.property(action.target,action.characteristic,"Target");
       }
       // blank out any prerolled locations if available
-      if (action.locations.ResultLocation != undefined) {action.update(action.locations.ResultLocation,"");};
-      if (action.locations.TargetLocation != undefined) {action.update(action.locations.TargetLocation,"");};
+      action.update(action.actionProperties.actionLocations.actionResult,"");
+      action.update(action.actionProperties.actionLocations.actionTarget,"");
 
       // update the target and result for the target property
       if (targetNumber != null) {action.setProperty(action.target,action.characteristic,"Target",targetNumber);}
