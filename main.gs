@@ -1,15 +1,4 @@
-var CharacterSheetLocations = {
-  SeedProperties : "ActionScriptProperties", // location of the character properties to load
-  SeedPropertiesIndex : null,// location for key index of the character properties. If null this will be built on the fly
-  ActionPropertyResults : "ActionPropertyResults", // location of where to add/update properties
-  WeaponName : "ActionWeaponName", // location for the active weapon name
-  TalentName : "ActionTalentName", // location for the active talent/skill name
-  ResultLocation : "ActionResultNumber", // where to output the result of a dice roll
-  TargetLocation : "ActionTargetNumber", // where to output the target number used in a dice roll 
-  ActionLog : "ActionLog" // where to write log messages
-}
-
-
+var action = ED4eActions.EDAction( ).initialize();
 
 function onOpen() {
 
@@ -45,7 +34,6 @@ function simpleAction(action,target,characteristic) {
   try {
     action.target = target;
     action.characteristic = characteristic;
-    action.initialize();
     ED4eActions.simpleAction(action);
   }
   finally {
@@ -57,7 +45,6 @@ function diceAction(action,target,characteristic) {
   try {
     action.target = target;
     action.characteristic = characteristic;
-    action.initialize();
     ED4eActions.diceAction(action);
   }
   finally {
@@ -66,55 +53,59 @@ function diceAction(action,target,characteristic) {
 }
 
 function newDay() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   simpleAction(action,"Environment","New Day");
 }
 
 function healWound() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   simpleAction(action,"Health","Wounds");
 }
 
 function decreaseDamage() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   simpleAction(action,"Health","Heal");
 }
 
 function increaseDamage() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   simpleAction(action,"Health","Damage");
 }
 
 function karmaRitual() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   simpleAction(action,"Talent","Karma Ritual");
 }
 
 function rollKnockdown() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   diceAction(action,"Health","Knockdown");  
 }
 
 function rollRecoveryTest() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   diceAction(action,"Health","Recovery");  
 }
 
 function rollDamage() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
-  diceAction(action,action.value(CharacterSheetLocations.WeaponName),"Damage");
+
+  diceAction(action,action.propertyValue("Action","Weapon","Selected"),"Damage");
 }
 
 function rollAttack() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
-  diceAction(action,action.value(CharacterSheetLocations.WeaponName),"Attack");
+
+  diceAction(action,action.propertyValue("Action","Weapon","Selected"),"Attack");
+}
+
+function rollAttribute() {
+  diceAction(action,"Attribute",action.propertyValue("Action","Attribute","Selected"));
 }
 
 function rollTalent() {
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
-  var characteristic = action.value(CharacterSheetLocations.TalentName);
-  var target = action.property("Talent",characteristic,"Type");
-  if (action.property(target,characteristic,"Step") == null) {
+
+  var characteristic = action.propertyValue("Action","Talent","Selected");
+  var target = action.propertyValue("Talent",characteristic,"Selected");
+  if (action.propertyValue(target,characteristic,"Step") == null) {
     simpleAction(action,target,characteristic);
   }
   else {
@@ -123,12 +114,12 @@ function rollTalent() {
 }
 
 function rollInitiative(){
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   diceAction(action,"Attribute","Initiative");
 }
 
 function rollKarma(){
-  var action = ED4eActions.EDAction(CharacterSheetLocations);
+
   diceAction(action,"Character","Karma");
 }
 
