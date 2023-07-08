@@ -11,14 +11,23 @@
 								if(rows(found)=1,EVALUATEVALUE(index(found,1,4),row,range,blank),
 									lambda(defaultsFound,
 										if(rows(defaultsFound)=1,EVALUATEVALUE(index(defaultsFound,1,4),row,range,blank),
-											if(blank,"ERROR:Multiple REF:"&join(",",flatten(found)),propertyValue)
+											if(blank,
+												iferror(lambda(multiples,
+													if(rows(multiples)=1,
+													index(multiples,0,4),
+													"ERROR:MULTIPLE REFERENCES FOUND :{"&rows(multiples)&"}"&join(",",flatten(multiples))&"}")
+												)(lambda(agg,filter(agg,index(index(agg,0,4)<>"")))(aggregateProperties(arrayformula({index(found,0,1),index(found,0,2),index(found,0,3),VALUE(index(found,0,4))})))),
+													"ERROR:MULTIPLE REFERENCES FOUND :{"&rows(found)&"}"&join(",",flatten(found))&"}"
+												)
+												,propertyValue
+											)
 										)
 									)
 									(filter(found, if(ISNONTEXT(index(found,0,4)),true, not(regexmatch(index(found,0,4),"DEFAULT")))))
 								)
 							)(lambda(criteria,
 								filter(range,countifs(index(criteria,1,1),if(index(criteria,1,1)="*",index(criteria,1,1),index(range,0,1)),index(criteria,1,2),if(index(criteria,1,2)="*",index(criteria,1,2),index(range,0,2)),index(criteria,1,3),if(index(criteria,1,3)="*",index(criteria,1,3),index(range,0,3))))
-							)(SPLIT(param3,"|"))),if(blank,,propertyValue)),
+							)(SPLIT(param3,"|"))),if(blank,0,propertyValue)),
 						"ADD",ADD(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
 						"MINUS",MINUS(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
 						"DIVIDE",rounddown(DIVIDE(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),0),
