@@ -30,7 +30,7 @@
 							)(SPLIT(param3,"|"))),if(blank,0,propertyValue)),
 						"ADD",ADD(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
 						"MINUS",MINUS(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
-						"DIVIDE",rounddown(DIVIDE(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),0),
+						"DIVIDE",rounddown(DIVIDE(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),0), 
 						"MULTIPLY",MULTIPLY(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
 						"FIB",FIB(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
 						"MAX",MAX(VALUE(EVALUATEVALUE(param1,row,range,blank)),VALUE(EVALUATEVALUE(param2,row,range,blank))),
